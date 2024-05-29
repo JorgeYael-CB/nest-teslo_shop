@@ -12,6 +12,9 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+mongo/
+postgres/
+
 # OS
 .DS_Store
 
