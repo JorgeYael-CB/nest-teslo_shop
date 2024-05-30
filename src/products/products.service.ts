@@ -4,6 +4,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class ProductsService {
@@ -37,22 +38,44 @@ export class ProductsService {
     } catch (error) {
       this.handleError(error);
     }
+  };
 
-  }
 
-  findAll() {
-    return `This action returns all products`;
-  }
+  async findAll(paginationDto: PaginationDto) {
+    const {limit = 10, offset = 0} = paginationDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
-  }
+    const products = await this.productRepository.find({
+      take: limit,
+      skip: offset,
+
+      // TODO: relaciones
+    });
+    return products;
+  };
+
+
+  async findOne(id: string) {
+    const Product = await this.productRepository.findOneBy({id});
+
+    if( !Product )
+      throw new BadRequestException(`product with id '${id}' not found... hehe`);
+
+    return Product;
+  };
+
 
   update(id: number, updateProductDto: UpdateProductDto) {
     return `This action updates a #${id} product`;
-  }
+  };
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
-  }
+  async remove(id: string) {
+    const product = await this.productRepository.findOneBy({id});
+
+    if( !product )
+      throw new BadRequestException(`Product with id '${id}' not found`);
+
+    this.productRepository.remove( product );
+
+    return product
+  };
 };
