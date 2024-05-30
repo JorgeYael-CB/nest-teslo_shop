@@ -58,13 +58,15 @@ export class ProductsService {
 
   async findOne(term: string) {
     let product:Product;
+    term = term.toUpperCase();
+
 
     if( isUuid( term ) ){
       product = await this.productRepository.findOneBy({id: term});
     } else {
       const queryBuilder = this.productRepository.createQueryBuilder();
       product = await queryBuilder
-        .where(`title =:title or slug =:slug`, {
+        .where(`UPPER(title) =:title or UPPER(slug) =:slug`, { // evitar inyeccion sql y mas libertad
           title: term,
           slug: term,
         }).getOne();
