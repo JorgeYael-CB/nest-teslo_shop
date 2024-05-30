@@ -79,18 +79,28 @@ export class ProductsService {
   };
 
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
-  };
-
-  async remove(id: string) {
-    const product = await this.productRepository.findOneBy({id});
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const product = await this.productRepository.preload({
+      id,
+      ...updateProductDto,
+    });
 
     if( !product )
-      throw new BadRequestException(`Product with id '${id}' not found`);
+      throw new BadRequestException(`product with id: '${id}' not found`);
+
+    try {
+      await this.productRepository.save(product)
+      return product;
+    } catch (error) {
+      this.handleError(error);
+    }
+  };
+
+
+  async remove(id: string) {
+    const product = await this.findOne(id);
 
     this.productRepository.remove( product );
-
-    return product
+    return product;
   };
 };
