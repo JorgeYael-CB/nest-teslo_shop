@@ -12,25 +12,29 @@ export class ProductsController {
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
-  }
+  };
+
 
   @Get()
   findAll( @Query() paginationDto: PaginationDto ) {
     return this.productsService.findAll( paginationDto );
-  }
+  };
+
 
   @Get(':term')
   findOne(@Param('term') term: string) {
-    return this.productsService.findOne(term);
-  }
+    return this.productsService.findOnePlain(term);
+  };
+
 
   @Patch(':id')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.update(id, updateProductDto);
-  }
+  };
+
 
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.productsService.remove(id);
-  }
-}
+  };
+};

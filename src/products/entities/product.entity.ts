@@ -1,4 +1,5 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ProductImage } from "./product-image.entity";
 
 
 @Entity()
@@ -52,6 +53,15 @@ export class Product {
     })
     tags: string[];
 
+
+    @OneToMany(
+        () => ProductImage,
+        (productImage) => productImage.product,
+        {cascade: true, eager: true},
+        // cascade sigue los cambios en las imagenes (las borra si se borra el prodicto
+        // y el eager te da la opcion para obtener sus relaciones en findOne
+    )
+    images?: ProductImage[];
 
 
     @BeforeInsert()
