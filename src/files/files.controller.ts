@@ -4,6 +4,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { fileFilter, fileNamer } from './helpers';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 
 
@@ -17,7 +18,10 @@ import { Response } from 'express';
 
 @Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
+  constructor(
+    private readonly filesService: FilesService,
+    private readonly configService: ConfigService
+  ) {}
 
 
   @Get('product/:imageName')
@@ -49,10 +53,8 @@ export class FilesController {
       };
 
       // const secureUrl:string = `${file.filename}`;
-      const secureUrl:string = `http://localhost:3000/api/files/product/${file.filename}`;
-    return {
-      secureUrl,
-    };
+      const secureUrl:string = `${ this.configService.get('HOST_API') }/files/product/${file.filename}`;
+    return { secureUrl };
   };
 
 }
